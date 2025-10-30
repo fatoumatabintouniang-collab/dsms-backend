@@ -1,0 +1,17 @@
+com\example\dsms\config\StlDataSourceConfig.class
+com\example\dsms\config\ThiesDataSourceConfig.class
+com\example\dsms\controller\VenteRestController.class
+com\example\dsms\model\Vente.class
+com\example\dsms\config\WebConfig.class
+com\example\dsms\config\WebConfig$1.class
+com\example\dsms\config\DakarDataSourceConfig.class
+com\example\dsms\thies\repository\VenteRepositoryThies.class
+com\example\dsms\config\DakarDataSourceConfig$1.class
+com\example\dsms\config\StlDataSourceConfig$1.class
+com\example\dsms\dakar\repository\VenteRepositoryDakar.class
+com\example\dsms\service\MultiVenteService.class
+com\example\dsms\config\ThiesDataSourceConfig$1.class
+com\example\dsms\controller\WebController.class
+com\example\dsms\DsmsApplication.class
+com\example\dsms\service\SyncService.class
+com\example\dsms\stl\repository\VenteRepositoryStl.class

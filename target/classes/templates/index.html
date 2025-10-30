@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSMS - Gestion des ventes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .badge-dakar { background-color: #0d6efd; }
+        .badge-thies { background-color: #198754; }
+        .badge-saint-louis { background-color: #dc3545; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .table { font-size: 0.85rem; }
+            .btn-sm { font-size: 0.75rem; padding: 0.25rem 0.5rem; }
+            .card-header h5 { font-size: 1rem; }
+            h2 { font-size: 1.5rem; }
+        }
+
+        @media (max-width: 576px) {
+            .container { padding: 0.5rem; }
+            body { padding: 0.5rem !important; }
+        }
+    </style>
+</head>
+<body class="p-4 bg-light">
+<div class="container">
+    <h2 class="mb-4 text-primary">📊 DSMS - Gestion des Ventes Distribuées</h2>
+
+    <!-- Formulaire d'ajout -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">➕ Ajouter une vente</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/add}" method="post">
+                <div class="row g-3">
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label">Produit</label>
+                        <input name="produit" placeholder="Ex: Riz" class="form-control" required/>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <label class="form-label">Montant (FCFA)</label>
+                        <input name="montant" type="number" step="0.01" placeholder="5000" class="form-control" required/>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <label class="form-label">Date</label>
+                        <input name="dateVente" type="date" class="form-control" required/>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <label class="form-label">Région</label>
+                        <select name="region" class="form-select" required>
+                            <option value="">-- Choisir --</option>
+                            <option value="dakar">🏙️ Dakar</option>
+                            <option value="thies">🌾 Thiès</option>
+                            <option value="saint-louis">🏖️ Saint-Louis</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-12 d-flex align-items-end">
+                        <button class="btn btn-primary w-100">Ajouter</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recherche et Synchronisation -->
+    <div class="row mb-3">
+        <div class="col-md-6 col-12 mb-2 mb-md-0">
+            <form th:action="@{/}" method="get">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="🔍 Rechercher un produit ou région..." />
+                    <button class="btn btn-secondary">Rechercher</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 col-12 text-md-end">
+            <form th:action="@{/sync}" method="post" class="d-inline">
+                <button class="btn btn-success w-100 w-md-auto">🔄 Synchroniser maintenant</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message de confirmation -->
+    <div th:if="${message}" class="alert alert-success alert-dismissible fade show">
+        <strong th:text="${message}"></strong>
+        <p th:if="${lastSync}" class="small text-muted mb-0">
+            Dernière synchronisation : <span th:text="${#dates.format(lastSync, 'dd/MM/yyyy HH:mm:ss')}"></span>
+        </p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Tableau des ventes -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">📋 Liste des ventes (toutes régions)</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Produit</th>
+                        <th>Montant</th>
+                        <th>Région</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="v : ${ventes}">
+                        <td th:text="${#temporals.format(v.dateVente, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${v.produit}"></td>
+                        <td><strong th:text="${v.montant} + ' FCFA'"></strong></td>
+                        <td>
+                            <span th:class="'badge badge-' + ${v.region}" th:text="${v.region}"></span>
+                        </td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-warning btn-sm edit-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editModal"
+                                    th:data-id="${v.id}"
+                                    th:data-produit="${v.produit}"
+                                    th:data-montant="${v.montant}"
+                                    th:data-date="${v.dateVente}"
+                                    th:data-region="${v.region}">
+                                ✏️ Modifier
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-danger btn-sm delete-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal"
+                                    th:data-id="${v.id}"
+                                    th:data-produit="${v.produit}">
+                                🗑️ Supprimer
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer text-end bg-light">
+            <h5 class="mb-0">💰 Total Global : <span class="text-success" th:text="${total} + ' FCFA'">0.0</span></h5>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form th:action="@{/update}" method="post">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">✏️ Modifier la vente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="edit-id"/>
+                    <div class="mb-3">
+                        <label class="form-label">Produit</label>
+                        <input type="text" name="produit" id="edit-produit" class="form-control" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Montant</label>
+                        <input type="number" step="0.01" name="montant" id="edit-montant" class="form-control" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" name="dateVente" id="edit-date" class="form-control" required/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Région</label>
+                        <select name="region" id="edit-region" class="form-select" required>
+                            <option value="dakar">Dakar</option>
+                            <option value="thies">Thiès</option>
+                            <option value="saint-louis">Saint-Louis</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button class="btn btn-primary" type="submit">💾 Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Supprimer -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-danger">
+            <form id="deleteForm" method="post">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">⚠️ Confirmation de suppression</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="delete-text">Voulez-vous vraiment supprimer cette vente ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Modale Modifier
+        document.querySelectorAll(".edit-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("edit-id").value = btn.dataset.id;
+                document.getElementById("edit-produit").value = btn.dataset.produit;
+                document.getElementById("edit-montant").value = btn.dataset.montant;
+                document.getElementById("edit-date").value = btn.dataset.date;
+                document.getElementById("edit-region").value = btn.dataset.region;
+            });
+        });
+
+        // Modale Supprimer
+        document.querySelectorAll(".delete-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = btn.dataset.id;
+                const produit = btn.dataset.produit;
+                document.getElementById("delete-text").textContent =
+                    "Voulez-vous vraiment supprimer la vente du produit : " + produit + " ?";
+                document.getElementById("deleteForm").setAttribute("action", "/delete/" + id);
+            });
+        });
+
+        // Date par défaut = aujourd'hui
+        const dateInput = document.querySelector('input[name="dateVente"]');
+        if (dateInput) {
+            dateInput.valueAsDate = new Date();
+        }
+    });
+</script>
+</body>
+</html>

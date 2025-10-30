@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  datasource:
+    dakar:
+      url: jdbc:postgresql://localhost:5432/ventes_dakar
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
+    thies:
+      url: jdbc:postgresql://localhost:5432/ventes_thies
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
+    stl:
+      url: jdbc:postgresql://localhost:5432/ventes_stlouis
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
