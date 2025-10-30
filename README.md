@@ -2,42 +2,41 @@
 
 ## 🧠 Introduction
 
-Le projet **DSMS** (*Distributed Sales Management System*) est une application **Spring Boot** développée dans le cadre du module **Base de Données Distribuées**.  
+Le projet **DSMS** (*Distributed Sales Management System*) est une application **Spring Boot** développée dans le cadre du module **Base de Données Distribuées**.
 Il a pour objectif de gérer les **ventes réparties sur plusieurs régions** (Dakar, Thiès et Saint-Louis), chacune disposant de sa propre base de données PostgreSQL.
 
-Grâce à un mécanisme de **synchronisation automatique et manuelle**, les ventes restent cohérentes entre les différentes bases.  
+Grâce à un mécanisme de **synchronisation automatique et manuelle**, les ventes restent cohérentes entre les différentes bases.
 L’application fournit également une **interface web intuitive** (Thymeleaf + Bootstrap) permettant d’ajouter, modifier, rechercher et synchroniser les ventes en temps réel.
 
 ---
 
 ## 🎯 Objectifs du projet
 
-- Concevoir une **application distribuée** simulant plusieurs sites régionaux de vente.  
-- Implémenter la **réplication et la synchronisation** entre bases PostgreSQL.  
-- Permettre une **consultation et une gestion centralisée** des ventes.  
-- Fournir une **interface simple, dynamique et conviviale**.  
-- Illustrer les principes de **cohérence, tolérance aux pannes et synchronisation** dans un environnement distribué.
+* Concevoir une **application distribuée** simulant plusieurs sites régionaux de vente.
+* Implémenter la **réplication et la synchronisation** entre bases PostgreSQL.
+* Permettre une **consultation et une gestion centralisée** des ventes.
+* Fournir une **interface simple, dynamique et conviviale**.
+* Illustrer les principes de **cohérence, tolérance aux pannes et synchronisation** dans un environnement distribué.
 
 ---
 
 ## 🧩 Technologies utilisées
 
-| Côté | Technologie | Description |
-|------|--------------|-------------|
-| Backend | **Java 21** | Langage principal |
-| Framework | **Spring Boot 3.x** | Cadre d’application |
-| ORM | **Spring Data JPA** | Accès et gestion des données |
-| Base de données | **PostgreSQL** | Stockage régional des ventes |
-| Interface | **Thymeleaf + Bootstrap 5** | Interface web intégrée |
-| Tâches planifiées | **Spring Scheduler** | Synchronisation automatique |
-| Build | **Maven** | Gestion des dépendances et du packaging |
+| Côté              | Technologie                 | Description                             |
+| ----------------- | --------------------------- | --------------------------------------- |
+| Backend           | **Java 21**                 | Langage principal                       |
+| Framework         | **Spring Boot 3.x**         | Cadre d’application                     |
+| ORM               | **Spring Data JPA**         | Accès et gestion des données            |
+| Base de données   | **PostgreSQL**              | Stockage régional des ventes            |
+| Interface         | **Thymeleaf + Bootstrap 5** | Interface web intégrée                  |
+| Tâches planifiées | **Spring Scheduler**        | Synchronisation automatique             |
+| Build             | **Maven**                   | Gestion des dépendances et du packaging |
 
 ---
 
 ## 🏗️ Architecture du projet
 
 ```
-
 src/
 ├── main/java/com/example/dsms/
 │    ├── config/               → Configuration des 3 sources de données
@@ -52,19 +51,19 @@ src/
 ├── templates/            → Pages HTML (index.html)
 ├── static/               → Fichiers CSS / JS
 └── application.yml       → Configuration multi-datasource
-
-````
+```
 
 ---
 
 ## 🗄️ Configuration des bases PostgreSQL
 
 Créer trois bases de données locales :
+
 ```sql
 CREATE DATABASE ventes_dakar;
 CREATE DATABASE ventes_thies;
 CREATE DATABASE ventes_stlouis;
-````
+```
 
 Et (optionnellement) un utilisateur :
 
@@ -160,12 +159,12 @@ Fonctionnalités :
 1️⃣ Cloner le dépôt :
 
 ```bash
-git clone https://github.com/fatoumatabintouniang-collab/dsms-backend
+git clone https://github.com/fatoumatabintouniang-collab/dsms-backend.git
 cd dsms-backend
 ```
 
-2️⃣ Créer les 3 bases PostgreSQL.
-3️⃣ Vérifier la configuration dans `application.yml`.
+2️⃣ Créer les 3 bases PostgreSQL
+3️⃣ Vérifier la configuration dans `application.yml`
 4️⃣ Démarrer l’application :
 
 ```bash
@@ -210,7 +209,3 @@ mvn spring-boot:run
 Le projet **DSMS** démontre les concepts clés des **bases de données distribuées** :
 la **cohérence**, la **réplication** et la **synchronisation inter-régionale**.
 Cette application illustre comment maintenir des données homogènes dans un système réparti tout en offrant une interface web fluide et simple d’utilisation.
-
-```
-
-
